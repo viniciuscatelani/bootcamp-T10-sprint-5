@@ -1,53 +1,61 @@
-import pandas as pd
-import scipy.stats
+# Importação das bibliotecas necessárias
 import streamlit as st
-import time
+import plotly.express as px
+import pandas as pd
 
-# estas são variáveis persistentes preservadas à medida que o Streamlin executa novamente esse script
-if 'experiment_no' not in st.session_state:
-    st.session_state['experiment_no'] = 0
+# Leitura do arquivo
+vehicles = pd.read_csv('../vehicles.csv')
 
-if 'df_experiment_results' not in st.session_state:
-    st.session_state['df_experiment_results'] = pd.DataFrame(columns=['no', 'iterations', 'mean'])
+# Título do dashboard
+st.title("Dashboard de Veículos")
 
-st.header('Jogando uma moeda')
+# Checkboxes para gerar os gráficos
+build_boxplot = st.checkbox(
+    'Gerar o gráfico de preços por condição do veículo')
+build_histogram = st.checkbox(
+    'Gerar o gráfico de veículos anunciados por ano de fabricação')
+build_scatterplot = st.checkbox(
+    'Gerar o gráfico da relação entre preço e quilometragem')
 
-chart = st.line_chart([0.5])
+# Botão para gerar os gráficos
+if build_boxplot:
 
-def toss_coin(n):
+    # Gráfico 1: Boxplot por condição
+    fig1 = px.box(vehicles,
+                  x='condition',
+                  y='price',
+                  title='Distribuição de Preços por Condição do Veículo',
+                  labels={'condition': 'Condição', 'price': 'Preço (USD)'},
+                  color='condition')
 
-    trial_outcomes = scipy.stats.bernoulli.rvs(p=0.5, size=n)
+    # Exibição do gráfico
+    st.plotly_chart(fig1, use_container_width=True)
 
-    mean = None
-    outcome_no = 0
-    outcome_1_count = 0
+if build_histogram:
+    # Gráfico 2: Histograma por ano
+    fig2 = px.histogram(vehicles,
+                        x='model_year',
+                        nbins=30,
+                        title='Distribuição de Carros por Ano de Fabricação',
+                        labels={'model_year': 'Ano de Fabricação'},
+                        color_discrete_sequence=['indianred'])
 
-    for r in trial_outcomes:
-        outcome_no +=1
-        if r == 1:
-            outcome_1_count += 1
-        mean = outcome_1_count / outcome_no
-        chart.add_rows([mean])
-        time.sleep(0.05)
+    # Exibição do gráfico
+    st.plotly_chart(fig2, use_container_width=True)
 
-    return mean
+if build_scatterplot:
+    # Gráfico 3: Dispersão odômetro vs preço
+    fig3 = px.scatter(vehicles,
+                      x='odometer',
+                      y='price',
+                      color='condition',
+                      title='Relação entre Quilometragem e Preço',
+                      labels={'odometer': 'Quilometragem',
+                              'price': 'Preço (USD)'},
+                      hover_data=['model', 'model_year'])
 
-number_of_trials = st.slider('Número de tentativas?', 1, 1000, 10)
-start_button = st.button('Executar')
+    # Exibição do gráfico
+    st.plotly_chart(fig3, use_container_width=True)
 
-if start_button:
-    st.write(f'Executando o experimento de {number_of_trials} tentativas.')
-    st.session_state['experiment_no'] += 1
-    mean = toss_coin(number_of_trials)
-    st.session_state['df_experiment_results'] = pd.concat([
-        st.session_state['df_experiment_results'],
-        pd.DataFrame(data=[[st.session_state['experiment_no'],
-                            number_of_trials,
-                            mean]],
-                     columns=['no', 'iterations', 'mean'])
-        ],
-        axis=0)
-    st.session_state['df_experiment_results'] = \
-        st.session_state['df_experiment_results'].reset_index(drop=True)
-
-st.write(st.session_state['df_experiment_results'])
+else:
+    st.info("Clique no botão acima para gerar os gráficos.")
