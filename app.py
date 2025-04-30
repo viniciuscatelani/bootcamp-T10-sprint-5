@@ -4,7 +4,7 @@ import plotly.express as px
 import pandas as pd
 
 # Leitura do arquivo
-vehicles = pd.read_csv('./bootcamp-T10-sprint-5/vehicles.csv')
+vehicles = pd.read_csv('./vehicles.csv')
 
 # Título do dashboard
 st.title("Dashboard de Veículos")
