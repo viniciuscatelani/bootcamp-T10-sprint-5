@@ -12,3 +12,5 @@ O aplicativo web tem como funcionalidade gerar gráficos com informações inter
 - Relação entre quilometragem e preço do veículo;
 
 Os gráficos podem ser gerados separadamente ou ao mesmo tempo.
+
+Link de acesso ao dashboard: https://bootcamp-t10-sprint-5.onrender.com/
