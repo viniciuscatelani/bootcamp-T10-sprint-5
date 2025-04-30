@@ -4,7 +4,7 @@ import plotly.express as px
 import pandas as pd
 
 # Leitura do arquivo
-vehicles = pd.read_csv('../vehicles.csv')
+vehicles = pd.read_csv('bootcamp-T10-sprint-5/vehicles.csv')
 
 # Título do dashboard
 st.title("Dashboard de Veículos")
@@ -58,4 +58,4 @@ if build_scatterplot:
     st.plotly_chart(fig3, use_container_width=True)
 
 else:
-    st.info("Clique no botão acima para gerar os gráficos.")
+    st.info("Clique nas checkboxes acima para gerar os gráficos.")
